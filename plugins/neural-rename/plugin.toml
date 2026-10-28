@@ -1,0 +1,18 @@
+# Draft manifest; no model has been trained, so every model field is a placeholder.
+id = "neural-rename"
+version = "0.0.0"
+description = "Recover variable and function names in Fission pseudocode with a small local model."
+entry = "fission_plugins.plugins.neural_rename:NeuralRename"   # not implemented yet
+
+[fission]
+tested_versions = ["0.2.3"]      # only the decomp --json shape of this version has been inspected
+input = "decomp-json"
+
+[model]
+base = "Qwen/Qwen2.5-Coder-0.5B"  # candidate; re-check its license when adopting
+base_license = "Apache-2.0"
+weights_repo = ""                # e.g. a Hugging Face repo, once something exists
+weights_revision = ""
+weights_sha256 = ""
+runtime = "llama.cpp"
+quantization = ""

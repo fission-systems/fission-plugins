@@ -1,0 +1,69 @@
+{
+  "address": "0x100000460",
+  "name": "checksum",
+  "size": 56,
+  "engine_used": "rust_sleigh",
+  "code": "extern bool __sborrow();\n\nint checksum(uchar * param_1, int param_2)\n{\n    int iVar20;\n    int w8;\n    uchar * x0;\n    unsigned long long x10;\n    long long x9;\n    long long xVar15;\n    bool xVar17;\n    int xVar6;\n\n    {\n        iVar20 = param_2 - 1;\n        if (iVar20 < 0 == __sborrow(param_2, 1)) {\n            {\n                w8 = 0;\n            }\n            x9 = param_2;\n            x0 = param_1;\n            do {\n                x0 = (uint8_t *)(x0) + 1;\n                x10 = (uint)*x0 - w8;\n                w8 = (uint)x10 + (w8 << 5);\n                {\n                    xVar6 = w8;\n                    w8 = w8;\n                }\n                xVar15 = x9 - 1;\n                xVar17 = xVar15 == 0;\n                x9 = xVar15;\n            } while (!xVar17);\n            return xVar6;\n        } else {\n            return 0;\n        }\n    }\n}\n",
+  "variables": [
+    {
+      "name": "param_1",
+      "kind": "arg",
+      "type": "uchar *",
+      "arg_index": 0
+    },
+    {
+      "name": "param_2",
+      "kind": "arg",
+      "type": "int",
+      "arg_index": 1
+    },
+    {
+      "name": "iVar20",
+      "kind": "reg",
+      "type": "int",
+      "arg_index": null
+    },
+    {
+      "name": "w8",
+      "kind": "reg",
+      "type": "int",
+      "arg_index": null
+    },
+    {
+      "name": "x0",
+      "kind": "reg",
+      "type": "uchar *",
+      "arg_index": null
+    },
+    {
+      "name": "x10",
+      "kind": "reg",
+      "type": "unsigned long long",
+      "arg_index": null
+    },
+    {
+      "name": "x9",
+      "kind": "reg",
+      "type": "long long",
+      "arg_index": null
+    },
+    {
+      "name": "xVar15",
+      "kind": "reg",
+      "type": "long long",
+      "arg_index": null
+    },
+    {
+      "name": "xVar17",
+      "kind": "reg",
+      "type": "bool",
+      "arg_index": null
+    },
+    {
+      "name": "xVar6",
+      "kind": "reg",
+      "type": "int",
+      "arg_index": null
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+*.egg-info/
+.venv/
+# model weights and training outputs live outside git
+*.gguf
+*.safetensors
+outputs/

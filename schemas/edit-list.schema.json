@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "fission-plugins edit list (v0, unstable)",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "function_name": { "type": ["string", "null"], "pattern": "^[A-Za-z_][A-Za-z0-9_]*$" },
+    "renames": {
+      "type": "object",
+      "propertyNames": { "pattern": "^[A-Za-z_][A-Za-z0-9_]*$" },
+      "additionalProperties": { "type": "string", "pattern": "^[A-Za-z_][A-Za-z0-9_]*$" }
+    },
+    "comments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["line", "text"],
+        "additionalProperties": false,
+        "properties": {
+          "line": { "type": "integer", "minimum": 1 },
+          "text": { "type": "string", "maxLength": 200 }
+        }
+      }
+    },
+    "type_hints": {
+      "description": "Reported only; v0 never applies type changes.",
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    }
+  }
+}
