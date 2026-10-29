@@ -107,6 +107,10 @@ def parse(text: str) -> list[dict]:
             continue
         if k == "DW_AT_name":
             target["name"] = _str(v)
+        elif k == "DW_AT_decl_file":
+            target["decl_file"] = _str(v)
+        elif k == "DW_AT_decl_line":
+            target["decl_line"] = int(v)
         elif k == "DW_AT_low_pc" and var is None:
             target["low_pc"] = int(v, 16)
         elif k == "DW_AT_high_pc" and var is None:

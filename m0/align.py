@@ -39,13 +39,28 @@ def base_reg(frame_base: str | None) -> int | None:
     return int(m.group(1)) if m else None
 
 
-def candidates(var: dict, fvars: list[dict], fbase: int | None, param_index: int | None) -> tuple[str, list[dict]]:
+# DWARF x86-64 register number -> names Fission may use for it (full register and sub-registers).
+X86_64_REGS = {
+    0: "rax eax ax al", 1: "rdx edx dx dl", 2: "rcx ecx cx cl", 3: "rbx ebx bx bl",
+    4: "rsi esi si sil", 5: "rdi edi di dil", 6: "rbp ebp bp bpl", 7: "rsp esp sp spl",
+    **{n: f"r{n} r{n}d r{n}w r{n}b" for n in range(8, 16)},
+}
+
+
+def candidates(var: dict, fvars: list[dict], fbase: int | None, param_index: int | None,
+               arch: str = "arm64") -> tuple[str, list[dict]]:
     loc = var.get("location") or {"kind": "none"}
     kind = loc["kind"]
     if var["tag"] == "param" and param_index is not None:
         got = [v for v in fvars if v["kind"] == "arg" and v.get("arg_index") == param_index]
         if got:
             return "param-index", got
+    if arch == "x86_64":
+        if kind == "reg":
+            names = {n for r in loc["regs"] for n in X86_64_REGS.get(r, "").split()}
+            return "register", [v for v in fvars if v["kind"] == "reg" and v["name"] in names]
+        # stack slot conventions (CFA/RBP-relative) have not been mapped to Fission's stack_offset on x86-64
+        return ("stack-unsupported-x86" if kind in ("fbreg", "breg") else kind), []
     if kind in ("fbreg", "breg"):
         sp_relative = (kind == "fbreg" and fbase == 31) or (kind == "breg" and loc.get("reg") == 31)
         got = [v for v in fvars if v["kind"] == "stack" and v.get("stack_offset") == loc["offset"]]

@@ -1,0 +1,55 @@
+{
+  "_comment": "Local build recipes. `license` is recorded per record; whether a project may be used for training released weights is a separate decision (`train_ok` is null until someone decides).",
+  "projects": {
+    "capstone": {
+      "license": "BSD-3-Clause",
+      "train_ok": null,
+      "src_dir": "/Users/sjkim1127/Fission/vendor/capstone-6.0.0-Alpha5",
+      "files": [
+        "MCInst.c",
+        "MCInstPrinter.c",
+        "MCInstrDesc.c",
+        "MCRegisterInfo.c",
+        "Mapping.c",
+        "SStream.c",
+        "cs.c",
+        "utils.c"
+      ],
+      "includes": [
+        ".",
+        "include"
+      ],
+      "defines": [
+        "CAPSTONE_USE_SYS_DYN_MEM"
+      ],
+      "note": "core files only; architecture decoders are not built"
+    },
+    "isl": {
+      "license": "MIT",
+      "train_ok": null,
+      "src_dir": "/Users/sjkim1127/Fission/vendor/llvm-project/polly/lib/External/isl",
+      "glob": "*.c",
+      "exclude_substrings": [
+        "templ",
+        "_test",
+        "main",
+        "_tab.c"
+      ],
+      "includes": [
+        "{generated}",
+        ".",
+        "include",
+        "imath"
+      ],
+      "defines": [
+        "HAVE_CONFIG_H"
+      ],
+      "generated_files": {
+        "isl_config.h": "#define HAVE___ATTRIBUTE__ 1\n#define GCC_WARN_UNUSED_RESULT __attribute__((__warn_unused_result__))\n#define HAVE_DECL_FFS 1\n#define HAVE_DECL___BUILTIN_FFS 1\n#define HAVE_DECL__BITSCANFORWARD 0\n#define HAVE_DECL_STRCASECMP 1\n#define HAVE_DECL__STRICMP 0\n#define HAVE_DECL_STRNCASECMP 1\n#define HAVE_DECL__STRNICMP 0\n#define HAVE_DECL_SNPRINTF 1\n#define HAVE_DECL__SNPRINTF 0\n#define USE_IMATH_FOR_MP 1\n#define USE_SMALL_INT_OPT 1\n#include <isl_config_post.h>\n",
+        "isl/stdint.h": "#include <stdint.h>\n"
+      },
+      "note": "vendored copy inside LLVM Polly; config header written by hand (not produced by isl's configure); files that do not compile standalone (template fragments) are dropped at build time and listed in the build manifest",
+      "skip_files_defining_main": true
+    }
+  }
+}
