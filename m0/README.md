@@ -47,8 +47,34 @@ That is a typing weakness, not evidence of misalignment, so this check cannot de
   dataset statistic. x86-64 / PE and larger C projects are untested.
 - Fission's O0 output for some functions looked semantically off in the earlier smoke test; alignment says nothing about that.
 
+## Manual check of the "unique" labels (87 pairs)
+
+Sample: `sample_review.py` seed 7, up to 25 non-parameter and 25 parameter pairs per level, drawn only from uniquely aligned pairs
+in functions whose pseudocode has at most 45 lines (O1 had only 12 such non-parameter pairs, so 37 in total). I read each
+function's C source against Fission's pseudocode and judged whether the Fission variable carries the source variable's value.
+Parameter pairs were judged from signatures (position and parameter count), non-parameter pairs from the bodies. One reviewer
+(an AI model, not a person); verdicts and notes are in `results/manual-review.json`.
+
+| | pairs | correct | partial | wrong |
+|---|---:|---:|---:|---:|
+| O0 stack locals | 25 | 25 | 0 | 0 |
+| O0 parameters | 25 | 25 | 0 | 0 |
+| O1 register locals | 12 | 10 | 2 | 0 |
+| O1 parameters | 25 | 25 | 0 | 0 |
+
+"Partial" means the Fission register is shared between source variables or holds an off-by-one value:
+`map_groups.i` ↔ `x11` (holds `i` or `i+1`), and `cs_strdup.new` ↔ `x0` (the same `x0` first holds `strlen(str)`, the source variable
+`len`). Renaming such a variable to one source name would mislabel part of its uses.
+
+What this supports: among small functions, uniquely aligned labels were right in 85 of 87 cases and not wrong in the other 2, with
+the register-local category at -O1 the only one with any problems. What it does not: n is small (12 for the weakest category, whose
+95% error bound is still about 25%), large functions were excluded by construction, and the 70 "shared" and 147 "none" O1 variables
+were not examined at all. "Correct" refers to variable identity only; Fission's bodies were often wrong or incomplete in these
+functions (for example `readBytes32` loses its computation and returns an uninitialised local, `MCOperand_CreateImm1` drops the
+stores), so a model trained on these inputs sees damaged code.
+
 ## Next
 
-1. Sample 50 unique pairs per optimization level and check them by hand to estimate label precision.
-2. Try address-range alignment for register locals at O1.
+1. Try address-range alignment for register locals at O1.
+2. Handle registers shared between source variables (do not rename them, or split by live range).
 3. Scale to several C projects with a project-level split, then build the training set.
