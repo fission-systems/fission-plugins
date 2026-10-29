@@ -1,0 +1,378 @@
+[
+ {
+  "label": "O0",
+  "stats": {
+   "functions_matched": 192,
+   "dwarf_vars": 574,
+   "unique": 516,
+   "none": 56,
+   "multi-candidate": 2
+  },
+  "by_method": {
+   "param-index": {
+    "unique": 364
+   },
+   "stack-sp": {
+    "unique": 142,
+    "none": 52,
+    "multi-candidate": 2
+   },
+   "other": {
+    "none": 1
+   },
+   "stack-fp": {
+    "none": 3,
+    "unique": 10
+   }
+  },
+  "type_agreement_on_unique": {
+   "agree": 394,
+   "disagree": 122
+  },
+  "examples": {
+   "type_disagree": [
+    [
+     "MCInst_Init",
+     "arch",
+     "cs_arch",
+     "param_2",
+     "long long"
+    ],
+    [
+     "MCInst_getOperand",
+     "inst",
+     "MCInst *",
+     "param_1",
+     "long long"
+    ],
+    [
+     "MCOperand_getFPImm",
+     "op",
+     "const MCOperand *",
+     "param_1",
+     "unsigned long long"
+    ],
+    [
+     "MCOperand_CreateReg0",
+     "mcInst",
+     "MCInst *",
+     "param_1",
+     "unsigned long long"
+    ],
+    [
+     "MCOperand_CreateImm0",
+     "mcInst",
+     "MCInst *",
+     "param_1",
+     "unsigned long long"
+    ],
+    [
+     "MCInst_isPredicable",
+     "OpInfo",
+     "const MCOperandInfo *",
+     "local_28",
+     "long long"
+    ]
+   ],
+   "none": [
+    [
+     "MCOperand_setFPImm",
+     "Val",
+     "stack-sp",
+     []
+    ],
+    [
+     "MCOperand_CreateReg0",
+     "op",
+     "stack-sp",
+     []
+    ],
+    [
+     "MCOperand_CreateImm0",
+     "op",
+     "stack-sp",
+     []
+    ],
+    [
+     "MCInst_handleWriteback",
+     "OpInfo",
+     "stack-sp",
+     []
+    ],
+    [
+     "markup",
+     "no_markup",
+     "other",
+     []
+    ],
+    [
+     "matchAliasPatterns",
+     "MIOpcode",
+     "stack-fp",
+     []
+    ]
+   ],
+   "multi-candidate": [
+    [
+     "map_implicit_reads",
+     "detail",
+     "stack-sp",
+     [
+      "local_28",
+      "slot_28"
+     ]
+    ],
+    [
+     "map_implicit_writes",
+     "detail",
+     "stack-sp",
+     [
+      "local_28",
+      "slot_88"
+     ]
+    ]
+   ]
+  }
+ },
+ {
+  "label": "O1",
+  "stats": {
+   "functions_matched": 160,
+   "dwarf_vars": 579,
+   "unique": 356,
+   "none": 147,
+   "shared": 70,
+   "multi-candidate": 6
+  },
+  "by_method": {
+   "param-index": {
+    "unique": 292
+   },
+   "other": {
+    "none": 31
+   },
+   "register": {
+    "unique": 63,
+    "shared": 64,
+    "none": 96,
+    "multi-candidate": 6
+   },
+   "none": {
+    "none": 11
+   },
+   "stack-fp": {
+    "none": 1
+   },
+   "stack-sp": {
+    "shared": 6,
+    "none": 3,
+    "unique": 1
+   },
+   "const": {
+    "none": 5
+   }
+  },
+  "type_agreement_on_unique": {
+   "agree": 279,
+   "disagree": 77
+  },
+  "examples": {
+   "type_disagree": [
+    [
+     "MCInst_Init",
+     "arch",
+     "cs_arch",
+     "param_2",
+     "unsigned long long"
+    ],
+    [
+     "MCOperand_getFPImm",
+     "op",
+     "const MCOperand *",
+     "param_1",
+     "long long"
+    ],
+    [
+     "MCInst_isPredicable",
+     "OpInfo",
+     "const MCOperandInfo *",
+     "x19",
+     "long long"
+    ],
+    [
+     "MCInst_handleWriteback",
+     "InstDescTable",
+     "const MCInstrDesc *",
+     "param_2",
+     "unsigned long long"
+    ],
+    [
+     "MCInst_handleWriteback",
+     "OpInfo",
+     "const MCOperandInfo *",
+     "x22",
+     "long long"
+    ],
+    [
+     "MCInst_handleWriteback",
+     null,
+     null,
+     "x19",
+     "fission_agg792 *"
+    ]
+   ],
+   "none": [
+    [
+     "MCInst_Init",
+     "i",
+     "other",
+     []
+    ],
+    [
+     "MCOperand_setFPImm",
+     "Val",
+     "other",
+     []
+    ],
+    [
+     "MCOperand_CreateReg1",
+     "op",
+     "none",
+     []
+    ],
+    [
+     "MCOperand_CreateReg0",
+     "op",
+     "other",
+     []
+    ],
+    [
+     "MCOperand_CreateImm1",
+     "op",
+     "none",
+     []
+    ],
+    [
+     "MCOperand_CreateImm0",
+     "op",
+     "other",
+     []
+    ]
+   ],
+   "shared": [
+    [
+     "MCInst_handleWriteback",
+     "InstDesc",
+     "register",
+     [
+      "x0",
+      "x20"
+     ]
+    ],
+    [
+     "MCInst_handleWriteback",
+     "idx",
+     "register",
+     [
+      "x0"
+     ]
+    ],
+    [
+     "matchAliasPatterns",
+     "MIOpcode",
+     "register",
+     [
+      "w9",
+      "x9"
+     ]
+    ],
+    [
+     "matchAliasPatterns",
+     "AsmStrOffset",
+     "register",
+     [
+      "w8",
+      "w9",
+      "x8",
+      "x9"
+     ]
+    ],
+    [
+     "matchAliasPatterns",
+     "Patterns",
+     "register",
+     [
+      "x26"
+     ]
+    ],
+    [
+     "matchAliasPatterns",
+     null,
+     "register",
+     [
+      "w8",
+      "x8"
+     ]
+    ]
+   ],
+   "multi-candidate": [
+    [
+     "map_implicit_reads",
+     "i",
+     "register",
+     [
+      "w10",
+      "x10"
+     ]
+    ],
+    [
+     "map_implicit_writes",
+     "i",
+     "register",
+     [
+      "w10",
+      "x10"
+     ]
+    ],
+    [
+     "map_cs_id",
+     null,
+     "register",
+     [
+      "w8",
+      "x8"
+     ]
+    ],
+    [
+     "map_cs_id",
+     null,
+     "register",
+     [
+      "w11",
+      "x11"
+     ]
+    ],
+    [
+     "map_set_alias_id",
+     "j",
+     "register",
+     [
+      "w8",
+      "x8"
+     ]
+    ],
+    [
+     "SStream_extract_mnem_opstr",
+     "off",
+     "register",
+     [
+      "w11",
+      "w9",
+      "x11",
+      "x9"
+     ]
+    ]
+   ]
+  }
+ }
+]
