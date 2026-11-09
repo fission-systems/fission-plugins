@@ -32,3 +32,5 @@ What this does and does not show:
 
 Reproduce: `prepare_names.py <matrix-dir> <out-dir> --per-build 100`, upload the output to a Colab VM and run
 `zeroshot_names.py <data-dir> <out-dir>`. About 10 minutes on an L4 for both conditions.
+
+Semantic preservation (compile-and-compare oracle, measured on 600 corpus functions): see `SEMANTICS.md`.
