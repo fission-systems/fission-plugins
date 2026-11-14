@@ -1,0 +1,61 @@
+{
+ "date": "2026-11-14",
+ "gpu": "NVIDIA L4 (22 GiB usable)",
+ "plan": "probe: 300 functions, 8 optimizer steps, 4 micro-batches x <=8192 padded tokens, LoRA r=16, grad checkpointing",
+ "script_commit": "2e47d0758bd56e8d3aa59dc0141ef5849d4fb115",
+ "packages": {
+  "fla-core": "0.6.0",
+  "flash-linear-attention": "0.6.0",
+  "peft": "0.21.2",
+  "torch": "2.14.1+cu130",
+  "transformers": "5.22.1",
+  "triton": "3.8.0"
+ },
+ "runs": {
+  "probe-coder1.5b": {
+   "first_step_s": 19.1,
+   "median_step_s": 19.9,
+   "step_s_range": [
+    18.1,
+    20.8
+   ],
+   "peak_mem_gib": 5.72,
+   "val_loss_step0": 1.164,
+   "val_loss_step8": 0.451,
+   "micro_batches_per_epoch_300fn": 45,
+   "est_hours_all_functions_2_epochs": 2.75,
+   "causal_conv1d_fallback": false,
+   "gated_delta_fallback": false
+  },
+  "probe-qwen3.5-0.8b": {
+   "first_step_s": 78.0,
+   "median_step_s": 15.5,
+   "step_s_range": [
+    11.4,
+    18.9
+   ],
+   "peak_mem_gib": 3.71,
+   "val_loss_step0": 1.481,
+   "val_loss_step8": 0.584,
+   "micro_batches_per_epoch_300fn": 49,
+   "est_hours_all_functions_2_epochs": 2.33,
+   "causal_conv1d_fallback": true,
+   "gated_delta_fallback": false
+  },
+  "probe-qwen3.5-2b": {
+   "first_step_s": 19.5,
+   "median_step_s": 18.9,
+   "step_s_range": [
+    18.3,
+    19.5
+   ],
+   "peak_mem_gib": 6.31,
+   "val_loss_step0": 1.351,
+   "val_loss_step8": 0.541,
+   "micro_batches_per_epoch_300fn": 49,
+   "est_hours_all_functions_2_epochs": 2.84,
+   "causal_conv1d_fallback": true,
+   "gated_delta_fallback": false
+  }
+ }
+}
