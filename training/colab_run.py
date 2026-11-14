@@ -23,6 +23,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 MODELS = {"coder1.5b": "Qwen/Qwen2.5-Coder-1.5B", "qwen3.5-2b": "Qwen/Qwen3.5-2B-Base", "qwen3.5-0.8b": "Qwen/Qwen3.5-0.8B-Base"}
 DATA_FILES = ("train.jsonl", "val.jsonl", "val-masked.jsonl", "manifest.json")
+PIP_UNINSTALL = {"uninstall": ["torchao"]}  # Colab image ships torchao 0.10.0, which peft 0.21 rejects
 PIP_BASE = {"packages": ["peft"], "timeout": 600}
 PIP_FLA = {"packages": ["flash-linear-attention"], "timeout": 900}
 
@@ -36,7 +37,7 @@ def checked(cmd: list, timeout: int = 90, **kw):
 
 
 def build_jobs(plan: str, models: list[str], sizes: list[str], seed: int, fla: bool) -> dict:
-    pip = [PIP_BASE] + ([PIP_FLA] if fla else [])
+    pip = [PIP_UNINSTALL, PIP_BASE] + ([PIP_FLA] if fla else [])
     runs = []
     if plan == "probe":
         for key in models:

@@ -39,6 +39,10 @@ def main() -> None:
     env_log = out / "env.log"
     sh(["nvidia-smi"], env_log)
     for spec in jobs["pip"]:
+        if "uninstall" in spec:  # e.g. the image's torchao 0.10 breaks peft 0.21 at LoRA injection
+            rc = sh([sys.executable, "-m", "pip", "uninstall", "-y", *spec["uninstall"]], env_log, 300)
+            status(**{f"pip-uninstall:{' '.join(spec['uninstall'])}": rc})
+            continue
         rc = sh([sys.executable, "-m", "pip", "install", "-q", *spec["packages"]], env_log, spec.get("timeout", 900))
         status(**{f"pip:{' '.join(spec['packages'])}": rc})
     sh([sys.executable, "-m", "pip", "list", "--format=freeze"], env_log)
