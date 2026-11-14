@@ -89,10 +89,16 @@ def batch_loss_sum(model, batch, pad_id: int, device: str):
     import torch.nn.functional as F
 
     ids, labels, mask = batch
-    logits = model(input_ids=ids, attention_mask=mask).logits[:, :-1].float()
+    # Only the completion positions need logits. Full-sequence logits (tokens x 150-250k vocab, fp32) were 5-7 GiB
+    # per micro-batch and ran an L4 out of memory, so project only the selected hidden states. LoRA is not on
+    # the output layer, so this is the same loss as model(...).logits.
+    base = model.get_base_model() if hasattr(model, "get_base_model") else model
+    hidden = base.get_decoder()(input_ids=ids, attention_mask=mask).last_hidden_state[:, :-1]
     target = labels[:, 1:]
-    loss = F.cross_entropy(logits.reshape(-1, logits.size(-1)), target.reshape(-1), ignore_index=-100, reduction="sum")
-    return loss, int((target != -100).sum())
+    keep = target != -100
+    logits = base.get_output_embeddings()(hidden[keep]).float()
+    loss = F.cross_entropy(logits, target[keep], reduction="sum")
+    return loss, int(keep.sum())
 
 
 def evaluate(model, items, pad_id, device, max_tokens) -> float:
