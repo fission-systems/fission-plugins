@@ -1,0 +1,44 @@
+{
+ "date": "2026-11-15",
+ "gpu": "NVIDIA L4 (22 GiB usable)",
+ "plan": "probe-fast: probe settings without gradient checkpointing, 4 x 8192 and 2 x 16384 padded tokens per step",
+ "script_commit": "fda7eb62bace36c58f4b9e1ec911cb80308a6175",
+ "runs": {
+  "fast-coder1.5b-b8k": {
+   "returncode": 1,
+   "seconds": 56.5,
+   "completed_steps": 0,
+   "failure": "torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 278.00 MiB. GPU 0 has a total capacity of 22.03 GiB of which 71.12 MiB is free. Including non-PyTo"
+  },
+  "fast-coder1.5b-b16k": {
+   "returncode": 1,
+   "seconds": 31.8,
+   "completed_steps": 0,
+   "failure": "torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 524.00 MiB. GPU 0 has a total capacity of 22.03 GiB of which 469.12 MiB is free. Including non-PyT"
+  },
+  "fast-qwen3.5-0.8b-b8k": {
+   "returncode": 1,
+   "seconds": 103.6,
+   "completed_steps": 0,
+   "failure": "torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 112.00 MiB. GPU 0 has a total capacity of 22.03 GiB of which 93.12 MiB is free. Including non-PyTo"
+  },
+  "fast-qwen3.5-0.8b-b16k": {
+   "returncode": 1,
+   "seconds": 42.6,
+   "completed_steps": 0,
+   "failure": "torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 210.00 MiB. GPU 0 has a total capacity of 22.03 GiB of which 201.12 MiB is free. Including non-PyT"
+  },
+  "fast-qwen3.5-2b-b8k": {
+   "returncode": 1,
+   "seconds": 60.3,
+   "completed_steps": 0,
+   "failure": "torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 190.00 MiB. GPU 0 has a total capacity of 22.03 GiB of which 41.12 MiB is free. Including non-PyTo"
+  },
+  "fast-qwen3.5-2b-b16k": {
+   "returncode": 1,
+   "seconds": 36.6,
+   "completed_steps": 0,
+   "failure": "torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 120.00 MiB. GPU 0 has a total capacity of 22.03 GiB of which 41.12 MiB is free. Including non-PyTo"
+  }
+ }
+}

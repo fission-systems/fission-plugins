@@ -151,3 +151,11 @@ python3 training/colab_run.py --data <d0 폴더> --output <새 폴더> --session
 - **curve 격자 전체(모델 3개 × 1천/3천/전체, 시드 1개) 추정은 약 12~13시간(L4)이다.** 1천과 3천은 전체의 약 15%,
   45%로 셈했다. 메모리는 6GiB 안팎만 써서 여유가 크다. 따라서 gradient checkpointing을 끄거나 1에폭으로 줄이면
   시간이 줄어들 수 있다(측정하지 않음).
+
+### 단축 설정 probe (2026-11-15, `training/results/probe-fast-l4-2026-11-15.json`)
+
+gradient checkpointing을 끄고 같은 probe를 묶음 2가지(8,192토큰 × 4, 16,384토큰 × 2)로 돌렸다. **실행 6개 모두
+첫 학습 단계에서 메모리가 부족했다**(L4 22GiB를 다 씀). 검증 손실 계산(역전파 없음)은 됐다.
+checkpointing을 켜면 최대 메모리가 6GiB 안팎이므로, 차이는 거의 전부 역전파용 활성값이다. **L4에서 8천 토큰 묶음으로
+학습하려면 checkpointing이 필요하다.** 더 작은 묶음(예: 4천 토큰 × 8)은 checkpointing 없이 들어갈 수도 있다.
+다만 GPU 활용이 떨어져 실제로 빨라지는지는 재지 않았다.
