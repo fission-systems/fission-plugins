@@ -217,8 +217,9 @@ def main() -> None:
             opt.step()
             opt.zero_grad(set_to_none=True)
             step += 1
+            peak = round(torch.cuda.max_memory_allocated() / 2**30, 2) if device == "cuda" else None
             record(step=step, train_loss=running / n_tok, lr=lr_at(step - 1), target_tokens=n_tok,
-                   elapsed_s=round(time.time() - started, 1))
+                   elapsed_s=round(time.time() - started, 1), peak_mem_gb=peak)
             if step % a.eval_every == 0 or step >= total_steps:
                 v = evaluate(model, val, pad_id, device, a.batch_tokens)
                 record(step=step, val_loss=v)

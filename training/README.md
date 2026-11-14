@@ -108,3 +108,20 @@ transformers + peft만 쓰는 LoRA 학습이다(r=16, alpha=32, 모든 선형층
   CUDA에서는 `flash-linear-attention`과 `causal-conv1d`를 깔면 빠른 커널이 쓰인다고 transformers가 안내하지만
   **설치와 속도는 Colab에서 확인한 값이 아직 없다.** 설치가 안 되면 Qwen3.5 두 후보의 학습 비용이 크게 늘 수 있다.
 - LoRA 어댑터를 병합해 GGUF로 변환하고 양자화한 뒤의 정확도는 아직 재지 않았다.
+
+### Colab 실행: `colab_run.py` (GPU를 쓰는 단계)
+
+```bash
+python3 training/colab_run.py --data <d0 폴더> --output <새 폴더> --session <이름> --plan probe --package-only   # GPU 없이 묶음만
+python3 training/colab_run.py --data <d0 폴더> --output <새 폴더> --session <이름> --plan probe --gpu L4          # GPU 할당
+```
+
+로컬 `colab` CLI(이 컴퓨터에 이미 있는 인증)로 세션 하나를 만들고, 학습 스크립트와 D0의 train/val 파일(3.3MiB 압축)
+만 올려 `colab_driver.py`가 설치 → 실행 → 결과 묶음을 처리한다. 예산 시간(`--budget-min`, 기본 60분)이 지나거나
+오류가 나도 `finally`에서 세션을 멈춘다. 자격 증명은 올리지 않는다. 결과(`log.jsonl`, `run.json`, 어댑터, 실행별 로그,
+`pip` 목록)는 내려받아 `--output` 아래에 푼다.
+
+- `--plan probe`: 후보 3개를 각각 300함수 · 8단계로 돌려 **단계당 시간, 최대 메모리, 빠른 커널이 실제로 쓰였는지**만
+  본다(`flash-linear-attention`을 설치하며, `--no-fla`로 느린 대체 구현도 잴 수 있다). 점수가 아니다.
+- `--plan curve`: `--models` × `--sizes`(기본 1000,3000,all) 격자. probe 결과로 시간을 추정한 뒤에만 돌린다.
+- 할당은 Colab 컴퓨팅 단위를 쓰므로 실행 전에 정한다.
