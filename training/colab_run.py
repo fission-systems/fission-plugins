@@ -4,6 +4,7 @@ Uses the local `colab` CLI with credentials already on this machine (nothing is 
 D0 train/val files and the job list). Allocating a GPU spends Colab compute units: run it only after deciding to.
 
   --plan probe   one short run per candidate (speed and memory, kernels installed or not); no result is a score
+  --plan probe-fast  the probe without gradient checkpointing, at 4 x 8k and 2 x 16k tokens per step
   --plan curve   the M2a grid: --models x --sizes, one run each, in order (long)
   --package-only build the tarball and job list and print them; no GPU
 
@@ -39,11 +40,18 @@ def checked(cmd: list, timeout: int = 90, **kw):
 def build_jobs(plan: str, models: list[str], sizes: list[str], seed: int, fla: bool) -> dict:
     pip = [PIP_UNINSTALL, PIP_BASE] + ([PIP_FLA] if fla else [])
     runs = []
+    probe = ["--functions", "300", "--max-steps", "8", "--eval-every", "1000", "--val-examples", "30", "--seed", str(seed)]
     if plan == "probe":
         for key in models:
-            runs.append(dict(name=f"probe-{key}", args=["--model", MODELS[key], "--functions", "300", "--max-steps", "8",
-                                                        "--eval-every", "1000", "--val-examples", "30", "--grad-ckpt", "--seed", str(seed)]))
-    else:
+            runs.append(dict(name=f"probe-{key}", args=["--model", MODELS[key], *probe, "--grad-ckpt"]))
+    elif plan == "probe-fast":
+        # same tokens per optimizer step as `probe` (4 x 8192 padded), without gradient checkpointing, then as
+        # 2 x 16384. Comparable step-for-step with the `probe` run at 8192 (same subset, seed and batches).
+        for key in models:
+            for tokens, accum in ((8192, 4), (16384, 2)):
+                runs.append(dict(name=f"fast-{key}-b{tokens // 1024}k", args=[
+                    "--model", MODELS[key], *probe, "--batch-tokens", str(tokens), "--accum", str(accum)]))
+    else:  # curve
         for key in models:
             for size in sizes:
                 args = ["--model", MODELS[key], "--seed", str(seed), "--grad-ckpt"]
@@ -58,7 +66,7 @@ def main() -> None:
     p.add_argument("--data", type=Path, required=True)
     p.add_argument("--output", type=Path, required=True)
     p.add_argument("--session", required=True)
-    p.add_argument("--plan", choices=["probe", "curve"], required=True)
+    p.add_argument("--plan", choices=["probe", "probe-fast", "curve"], required=True)
     p.add_argument("--gpu", choices=["A100", "L4", "T4", "G4"], default="L4")
     p.add_argument("--models", default="coder1.5b,qwen3.5-0.8b,qwen3.5-2b")
     p.add_argument("--sizes", default="1000,3000,all")
