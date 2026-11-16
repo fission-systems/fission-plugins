@@ -15,6 +15,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import shutil
 import subprocess
 import sys
 import tarfile
@@ -35,6 +36,30 @@ def sha(path: Path) -> str:
 
 def checked(cmd: list, timeout: int = 90, **kw):
     return subprocess.run([str(c) for c in cmd], check=True, timeout=timeout, **kw)
+
+
+def free_gb(path: Path) -> float:
+    return shutil.disk_usage(path).free / 2**30
+
+
+def download_results(session: str, out: Path, grace_min: int) -> None:
+    """Fetch the result archive, retrying for grace_min minutes (e.g. while the user frees local disk space).
+
+    On 2026-11-16 a finished curve run was lost: the local disk was full, the download failed once and the session
+    was stopped right after, deleting the only copy of the adapters.
+    """
+    deadline = time.monotonic() + grace_min * 60
+    while True:
+        done = subprocess.run(["colab", "download", "-s", session, "/content/ft/results.tar.gz", str(out / "results.tar.gz")],
+                              timeout=900, capture_output=True, text=True)
+        if done.returncode == 0:
+            return
+        print(f"result download failed ({(done.stdout + done.stderr).strip()[-300:]}); {free_gb(out):.1f} GiB free at {out}. "
+              f"The session stays up and the download is retried every minute until "
+              f"{max(0, (deadline - time.monotonic()) / 60):.0f} more minutes have passed.", flush=True)
+        if time.monotonic() > deadline:
+            raise RuntimeError("result download failed; the session will be stopped and its results are lost")
+        time.sleep(60)
 
 
 def build_jobs(plan: str, models: list[str], sizes: list[str], seed: int, fla: bool) -> dict:
@@ -74,6 +99,8 @@ def main() -> None:
     p.add_argument("--no-fla", action="store_true", help="do not install flash-linear-attention (measures the slow fallback)")
     p.add_argument("--budget-min", type=int, default=60)
     p.add_argument("--package-only", action="store_true")
+    p.add_argument("--min-free-gb", type=float, default=5.0, help="refuse to allocate a GPU with less local free space")
+    p.add_argument("--download-grace-min", type=int, default=60, help="keep retrying the result download this long")
     a = p.parse_args()
 
     data = a.data.resolve()
@@ -105,6 +132,8 @@ def main() -> None:
         print(json.dumps(jobs, indent=1))
         return
 
+    if free_gb(out) < a.min_free_gb:
+        sys.exit(f"only {free_gb(out):.1f} GiB free at {out} (need {a.min_free_gb}); not allocating a GPU")
     session, started, allocated = a.session, time.monotonic(), False
     try:
         checked(["colab", "new", "-s", session, "--gpu", a.gpu], timeout=180)
@@ -150,7 +179,7 @@ def main() -> None:
                 print(json.dumps(status), flush=True)
                 last = key
             if status.get("state") in ("complete", "failed"):
-                checked(["colab", "download", "-s", session, "/content/ft/results.tar.gz", out / "results.tar.gz"], timeout=600)
+                download_results(session, out, a.download_grace_min)
                 if status["state"] == "complete":
                     if sha(out / "results.tar.gz") != status["archive_sha256"]:
                         raise ValueError("result archive digest mismatch")
